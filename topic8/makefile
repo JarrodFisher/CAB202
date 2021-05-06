@@ -7,7 +7,7 @@
 #==== Main Options - students to modify =============================================================
 
 #Step 1: modify this line to match the name of your c file
-TARGETS = #edit here#
+TARGETS = setupuart1
 
 SRC = $(TARGETS).c
 
