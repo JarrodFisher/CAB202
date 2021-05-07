@@ -19,14 +19,14 @@ int uart_getbyte(unsigned char *buffer);
 **
 **  Returns: Nothing.
 */
-void uart_put_chars(char str) {
+void uart_put_chars(char str[]) {
     // INSERT CODE HERE.
     int i = 0;
-    while (str[i] != 0) {
+    while (str[i] != NULL) {
         uart_putbyte(str[i]);
         i++;
     }
-    uart_putbyte("\0");
+    uart_putbyte(NULL);
 }
 /*
 **  Define a function named uart_get_chars which uses uart_getbyte to fetch 
@@ -54,23 +54,22 @@ void uart_put_chars(char str) {
 **  Returns: Nothing. However, up to buff_len elements of buffer may have been 
 **      overwritten by incoming data. 
 */
-void uart_get_chars(unsigned char buffer, int buff_len) {
+void uart_get_chars(char buffer[], int buff_len) {
     // INSERT CODE HERE.
     int i = 0;
     unsigned char ch;
 
     while(1) {
-        while(!uart_getbyte(&ch)) {
-            if (ch == 0) {
-                break;
-            }
-            if (i < (buff_len-1)) {
-                buffer[i] = ch;
-                i++;
-            }
+        while(!uart_getbyte(&ch)) {}
+        if (ch == 0) {
+            break;
+        }
+        if (i < (buff_len-1)) {
+            buffer[i] = ch;
+            i++;
         }
     }
-    buffer[i] = "\0";
+    buffer[i] = NULL;
 }
 /*
 ***************************************************************************

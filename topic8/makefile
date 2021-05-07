@@ -7,7 +7,7 @@
 #==== Main Options - students to modify =============================================================
 
 #Step 1: modify this line to match the name of your c file
-TARGETS = setupuart1
+TARGETS = uartsend
 
 SRC = $(TARGETS).c
 
