@@ -33,12 +33,11 @@
 ||  **  explicitly.                                                                 ***
 ||      ***************************************************************************
 */
-RESULT_TYPE FUNCTION_NAME( PARAM_TYPE PARAM_NAME ) {
+void init_pwm( uint16_t division_factor ) {
     //  Configure the digital I/O pin corresponding to OCR0A for output. 
     //  Modify at most one pin in the DDR.
-
-    //  Update the value of TCCR0A so that register OC0A will clear on compare 
-    //  match. 
+    
+    //  Update the value of TCCR0A so that register OC0A will clear on compare match. 
 
     //  Update TCCR0B to disable Force Output Compare functionality.
 
@@ -51,6 +50,26 @@ RESULT_TYPE FUNCTION_NAME( PARAM_TYPE PARAM_NAME ) {
     //  Note from Lawrence: In TinkerCad I found it necessary to do this step 
     //  last to obtain the desired results. You may also get better results by 
     //  updating WGM01:0 in a single write instead of calling SET_BIT twice.
+    DDRD |= (1<<PD6);
+
+    TCCR0A = (1<<COM0A1)|(0<<COM0A0);
+
+    if (division_factor==1) {
+	    TCCR0B= (0<<FOC0A)|(0<<FOC0B)|(0<<WGM02)| (0<<CS02) | (0<<CS01) | (1<<CS00);
+    } else if (division_factor==8) {
+        TCCR0B= (0<<FOC0A)|(0<<FOC0B)|(0<<CS02) | (1<<CS01) | (0<<CS00);
+    } else if (division_factor==16) {
+        TCCR0B=0;
+    } else if (division_factor==64) {
+        TCCR0B= (0<<FOC0A)|(0<<FOC0B)| (0<<CS02) | (1<<CS01) | (1<<CS00);
+    } else if (division_factor==256) {
+        TCCR0B= (0<<FOC0A)|(0<<FOC0B)|(1<<CS02) | (0<<CS01) | (0<<CS00);
+    } else if (division_factor==1024) {
+        TCCR0B= (0<<FOC0A)|(0<<FOC0B)| (1<<CS02) | (0<<CS01) | (1<<CS00);
+    }
+
+    TCCR0A |= (1<<WGM01) | (1<<WGM00);
+    TCCR0B &= ~(1<<WGM02);
 }
 
 /*
@@ -61,8 +80,8 @@ RESULT_TYPE FUNCTION_NAME( PARAM_TYPE PARAM_NAME ) {
 ||  
 ||  Return: Nothing.
 */
-RESULT_TYPE FUNCTION_NAME( PARAM_TYPE PARAM_NAME ) {
-    OCR0A = SOMETHING;
+void write_pwm( uint8_t duration ) {
+    OCR0A = duration;
 }
 
 int main() {
