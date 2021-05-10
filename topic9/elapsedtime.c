@@ -15,10 +15,12 @@ void setup(void) {
     //	(a) Initialise Timer 1 in normal mode so that it overflows 
     //	with a period of approximately 0.004 seconds.
     //	Hint: use the table you completed in a previous exercise.
-
+    TCCR1B = 1; //1 pre scaler
     //	(b) Enable timer overflow for Timer 1.
-
+    sei();
     //	(c) Turn on interrupts.
+    TIMSK1 |= (1<<TOIE1);
+    // can also write as TIMSK1 = 1;
 
     //	(d) Send a debugging message to the serial port using
     //  the uart_printf function defined below. The message should consist of 
@@ -26,19 +28,21 @@ void setup(void) {
     //  followed by the pre-scale factor that corresponds to a timer overflow 
     //  period of approximately 0.004 seconds. Terminate the 
     //  debugging message with a carriage-return-linefeed pair, "\r\n".
+    uart_printf("n10462091,1\r\n");
 }
 
 //	(e) Create a volatile global variable called overflow_count.
 //	The variable should be a 32-bit unsigned integer of type uint32_t. 
 //	Initialise the variable to 0.
-
-// INSERT GLOBAL VARIABLE HERE
+volatile uint32_t overflow_count = 0;
 
 //	(f) Define an interrupt service routine to process timer overflow
 //	interrupts for Timer 1. Every time the interrupt service
 //	routine is called, overflow_count should increment by 1.
 
-// INSERT ISR HERE
+ISR(TIMER1_OVF_vect) {
+    overflow_count++;
+}
 
 //	(g) Define a function called get_current_time which has
 //	no parameters, but returns a value of type double which contains
@@ -47,7 +51,10 @@ void setup(void) {
 //	elapsed time, taking into account the fact that the timer counter has 
 //	16 bits rather than 8 bits.
 
-// INSERT FUNCTION HERE
+double get_current_time() {
+    double time = ( overflow_count * 65536.0 + TCNT1 ) * 1.0 / 16.0e6;
+    return time;
+}
 
 // -------------------------------------------------
 // Helper functions.
