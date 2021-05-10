@@ -15,32 +15,33 @@ void setup(void) {
     //  (a) Initialise Timer 0 in normal mode so that it overflows 
     //  with a period of approximately 0.004 seconds.
     //  Hint: use the table in Lecture 9.
-
+    TCCR0B = 4; //256 pre scaler
     //  (b) Enable timer overflow interrupt for Timer 0.
-
+    sei();
     //  (c) Turn on interrupts.
-
+    TIMSK0 = 1;
     //  (d) Enable the I/O pin labelled A3 for digital input.
-
+    DDRC &= ~(1<<3);
     //  (e) Send a debugging message to the serial port using
     //  the uart_printf function defined below. The message should consist of 
     //  your student number, "n10462091", followed immediately by a comma, 
     //  followed by the pre-scale factor that corresponds to a timer overflow 
     //  period of approximately 0.004 seconds. Terminate the 
     //  debugging message with a carriage-return-linefeed pair, "\r\n".
+    uart_printf("n10462091,256\r\n");
 }
 
 //  (f) Create a volatile global variable called bit_counter.
 //  The variable should be an 8-bit unsigned integer. 
 //  Initialise the variable to zero.
 
-// INSERT GLOBAL VARIABLE HERE
+volatile uint8_t bit_counter = 0; //history
 
 //  (g) Define a volatile 8-bit unsigned global variable 
 //  called pressed which will store the current state of the switch.
 //  Initialise it to zero.
 
-// INSERT GLOBAL VARIABLE HERE
+volatile uint8_t pressed = 0; //debounced state
 
 //  (h) Define an interrupt service routine to process timer overflow
 //  interrupts for Timer 0. Every time the interrupt service
@@ -58,7 +59,24 @@ void setup(void) {
 //          to be open at least 4 in a row, so store 0 in pressed, 
 //          indicating that the switch should now be considered to be officially "open".
 
-// INSERT ISR HERE
+ISR(TIMER0_OVF_vect) {
+    //h.a.
+    bit_counter = (bit_counter<<1);
+    //h.b.
+    uint8_t mask = 0b00001111;
+    bit_counter &= mask;
+    //h.c
+    //WRITE_BIT(bit_counter, 0, BIT_VALUE(PINC,3));
+    bit_counter = ((bit_counter & ~(1<<(0))) | (((PINC >> 3) & 1) << 0));
+    //h.d
+    if (bit_counter == mask) {
+        pressed = 1;
+    }
+    //h.e
+    else if (bit_counter == 0) {
+        pressed = 0;
+    }
+}
 
 // -------------------------------------------------
 // Helper functions.
