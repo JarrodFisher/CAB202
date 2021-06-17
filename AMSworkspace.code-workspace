@@ -1,0 +1,42 @@
+{
+	"folders": [
+		{
+			"path": "topic1"
+		},
+		{
+			"path": "topic2"
+		},
+		{
+			"path": "topic3"
+		},
+		{
+			"path": "topic4"
+		},
+		{
+			"path": "topic5"
+		},
+		{
+			"path": "topic6"
+		},
+		{
+			"path": "topic7"
+		},
+		{
+			"path": "topic8"
+		},
+		{
+			"path": "topic9"
+		},
+		{
+			"path": "topic10"
+		},
+		{
+			"path": "PRAC Questions"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"stdlib.h": "c"
+		}
+	}
+}
